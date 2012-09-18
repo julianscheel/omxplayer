@@ -3,6 +3,7 @@ CFLAGS+=-std=c++0x -DSTANDALONE -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -
 LDFLAGS+=-L./ -lc -lWFC -lGLESv2 -lEGL -lbcm_host -lopenmaxil -lfreetype -lz -Lffmpeg_compiled/usr/lib/
 INCLUDES+=-I./ -Ilinux -Iffmpeg_compiled/usr/include/
 
+DIST=$(DEST)
 DIST ?= omxplayer-dist
 
 SRC=linux/XMemUtils.cpp \
