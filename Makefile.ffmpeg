@@ -63,5 +63,5 @@ checkout:
 
 install:
 	cd ffmpeg; make -j9 DESTDIR="$(WORK)/ffmpeg_compiled" install
-	$(HOST)-strip ffmpeg_compiled/usr/local/lib/*.so
+	$(HOST)-strip ffmpeg_compiled/usr/lib/*.so
 
