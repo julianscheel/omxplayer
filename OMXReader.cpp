@@ -237,6 +237,8 @@ bool OMXReader::Open(std::string filename, bool dump_format)
     m_pFormatContext->max_analyze_duration = 0;
 #endif
 
+  m_pFormatContext->max_analyze_duration = 1000000;
+
   print_time("avformat_find_stream_info: start");
   result = m_dllAvFormat.avformat_find_stream_info(m_pFormatContext, NULL);
   print_time("avformat_find_stream_info: done");
