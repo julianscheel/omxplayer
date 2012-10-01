@@ -114,6 +114,17 @@ static offset_t dvd_file_seek(void *h, offset_t pos, int whence)
     return pFile->Seek(pos, whence & ~AVSEEK_FORCE);
 }
 
+void print_time(const char *description)
+{
+	char time_str[25];
+	time_t timer;
+	struct tm *tm;
+	time(&timer);
+	tm = localtime(&timer);
+	strftime(time_str, 25, "%Y:%m:%d%H:%M:%S", tm);
+	printf("%s: %s\n", description, time_str);
+}
+
 bool OMXReader::Open(std::string filename, bool dump_format)
 {
   if (!m_dllAvUtil.Load() || !m_dllAvCodec.Load() || !m_dllAvFormat.Load())
@@ -154,7 +165,9 @@ bool OMXReader::Open(std::string filename, bool dump_format)
     if(idx != string::npos)
       m_filename = m_filename.substr(0, idx);
 
+    print_time("avformat_open_input: start");
     result = m_dllAvFormat.avformat_open_input(&m_pFormatContext, m_filename.c_str(), iformat, NULL);
+    print_time("avformat_open_input: done");
     if(result < 0)
     {
       CLog::Log(LOGERROR, "COMXPlayer::OpenFile - avformat_open_input %s ", m_filename.c_str());
@@ -166,6 +179,7 @@ bool OMXReader::Open(std::string filename, bool dump_format)
   {
     m_pFile = new CFile();
 
+    print_time("CFile::open(): start");
     if (!m_pFile->Open(m_filename, flags))
     {
       CLog::Log(LOGERROR, "COMXPlayer::OpenFile - %s ", m_filename.c_str());
@@ -190,10 +204,13 @@ bool OMXReader::Open(std::string filename, bool dump_format)
       Close();
       return false;
     }
+    print_time("CFile::open(): done");
 
     m_pFormatContext     = m_dllAvFormat.avformat_alloc_context();
     m_pFormatContext->pb = m_ioContext;
+    print_time("avformat_open_input: start");
     result = m_dllAvFormat.avformat_open_input(&m_pFormatContext, m_filename.c_str(), iformat, NULL);
+    print_time("avformat_open_input: done");
     if(result < 0)
     {
       Close();
@@ -220,7 +237,9 @@ bool OMXReader::Open(std::string filename, bool dump_format)
     m_pFormatContext->max_analyze_duration = 0;
 #endif
 
+  print_time("avformat_find_stream_info: start");
   result = m_dllAvFormat.avformat_find_stream_info(m_pFormatContext, NULL);
+  print_time("avformat_find_stream_info: done");
   if(result < 0)
   {
     Close();
